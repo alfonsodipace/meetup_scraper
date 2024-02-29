@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+import datetime
 
 URL = ""
 
@@ -37,7 +38,7 @@ def get_event_from_meetup(url):
                 name = json_script["name"]
                 url = json_script["url"]
                 description = json_script["description"]
-                startDate = json_script["startDate"]
+                startDate = datetime.datetime.strptime(json_script["startDate"], "%Y-%m-%dT%H:%M:%S%z").strftime("%Y-%m-%d %H:%M")
                 endDate = json_script["endDate"]
                 location = json_script["location"]["name"]
                 event = Event(name, url, description, startDate, endDate, location)
@@ -47,6 +48,6 @@ def get_event_from_meetup(url):
 
 event = get_event_from_meetup(URL)
 if event is not None:
-    print(event.name)
+    print(event.startDate)
 else:
     print("Event not found")
