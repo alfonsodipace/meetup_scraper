@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import datetime
 
-URL = ""
+URL = "https://www.meetup.com/it-IT/golang-torino/events/299713545/"
 
 
 class Event:
@@ -40,7 +40,19 @@ def get_event_from_meetup(url):
                 description = json_script["description"]
                 startDate = datetime.datetime.strptime(json_script["startDate"], "%Y-%m-%dT%H:%M:%S%z").strftime("%Y-%m-%d %H:%M")
                 endDate = json_script["endDate"]
-                location = json_script["location"]["name"]
+                if "location" in json_script:
+                    if isinstance(json_script["location"], list):
+                        location = ""
+                        for el in json_script["location"]:
+                            if el["@type"] == "Place":
+                                location += el["name"] + " "
+                            if el["@type"] == "VirtualLocation":
+                                location += " Evento online "
+                    if "@type" in json_script["location"]:
+                        if json_script["location"]["@type"] == "Place":
+                            location = json_script["location"]["name"]
+                        if json_script["location"]["@type"] == "VirtualLocation":
+                            location = "Evento online"
                 event = Event(name, url, description, startDate, endDate, location)
                 return event
     return None
@@ -48,6 +60,6 @@ def get_event_from_meetup(url):
 
 event = get_event_from_meetup(URL)
 if event is not None:
-    print(event.startDate)
+    print(event.location)
 else:
     print("Event not found")
