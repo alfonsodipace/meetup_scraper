@@ -45,7 +45,7 @@ def get_event_from_meetup(url):
                         location = ""
                         for el in json_script["location"]:
                             if el["@type"] == "Place":
-                                location += el["name"] + " "
+                                location += " " + el["name"] + " "
                             if el["@type"] == "VirtualLocation":
                                 location += " Evento online "
                     if "@type" in json_script["location"]:
